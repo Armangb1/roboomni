@@ -1,0 +1,3 @@
+[submodule "src/kinect_ros2"]
+	path = src/kinect_ros2
+	url = https://github.com/fadlio/kinect_ros2.git
