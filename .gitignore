@@ -1,0 +1,32 @@
+
+# ROS 2 build artifacts
+build/
+install/
+log/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Visual Studio Code settings (optional)
+.vscode/
+
+# macOS specific
+.DS_Store
+
+# Backup or temporary files
+*~
+*.swp
+*.bak
+
+# Colcon metadata
+.colcon/
+
+# RViz config autosaves
+*.rviz~
+
+# Ignore hidden system files
+Thumbs.db
+
+# Ignore if you use ROS 1/2 workspaces together (optional)
+devel/
