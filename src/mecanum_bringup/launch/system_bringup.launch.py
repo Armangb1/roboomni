@@ -12,9 +12,9 @@ def generate_launch_description():
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(
                 PathJoinSubstitution([
-                    FindPackageShare('rplidar_ros'),
+                    FindPackageShare('mecanum_bringup'),
                     'launch',
-                    'rplidar_c1_launch.py'
+                    'lidar_bringup.launch.py'
                 ])
             ),
             launch_arguments={
