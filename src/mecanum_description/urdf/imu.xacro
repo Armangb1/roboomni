@@ -1,0 +1,119 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+
+    <!-- IMU properties -->
+    <xacro:property name="imu_mass" value="0.001" />
+
+    <!-- IMU material -->
+    <xacro:macro name="material_imu">
+        <material name="imu_material">
+            <color rgba="0 0 0.5 1" />
+        </material>
+    </xacro:macro>
+
+
+    <!-- IMU URDF macro -->
+    <xacro:macro name="imu_sensor_urdf" params="parent x y z rpy">
+        <link name="imu_link">
+            <inertial>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <mass value="${imu_mass}" />
+                <inertia
+                    ixx="1.0E-06" ixy="0" ixz="0"
+                    iyy="1.0E-06" iyz="0" izz="1.0E-06" />
+            </inertial>
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <geometry>
+                    <mesh filename="file://$(find mecanum_description)/meshes/imu_link.STL" />
+                </geometry>
+                <xacro:material_imu />
+            </visual>
+            <collision>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <geometry>
+                    <mesh filename="file://$(find mecanum_description)/meshes/imu_link.STL" />
+                </geometry>
+            </collision>
+        </link>
+
+        <joint name="chassis_imu_joint" type="fixed">
+            <origin xyz="${x} ${y} ${z}" rpy="${rpy}" />
+            <parent link="${parent}" />
+            <child link="imu_link" />
+        </joint>
+    </xacro:macro>
+
+    <xacro:macro name="imu_sensor_gazebo">
+        <!-- Gazebo plugin for IMU (optional) -->
+        <gazebo reference="imu_link">
+            <sensor name="imu_sensor" type="imu">
+                <plugin filename="libgazebo_ros_imu_sensor.so" name="imu_plugin">
+                    <topicName>imu</topicName>
+                    <bodyName>imu_link</bodyName>
+                    <updateRateHZ>50.0</updateRateHZ>
+                    <gaussianNoise>0.0</gaussianNoise>
+                    <xyzOffset>0 0 0</xyzOffset>
+                    <rpyOffset>0 0 0</rpyOffset>
+                    <frameName>imu_link</frameName>
+                    <initialOrientationAsReference>false</initialOrientationAsReference>
+                </plugin>
+                <always_on>true</always_on>
+                <update_rate>50</update_rate>
+                <visualize>true</visualize>
+                <imu>
+                    <angular_velocity>
+                        <x>
+                            <noise type="gaussian">
+                                <mean>0.0</mean>
+                                <stddev>2e-4</stddev>
+                            </noise>
+                        </x>
+                        <y>
+                            <noise type="gaussian">
+                                <mean>0.0</mean>
+                                <stddev>2e-4</stddev>
+                            </noise>
+                        </y>
+                        <z>
+                            <noise type="gaussian">
+                                <mean>0.0</mean>
+                                <stddev>2e-4</stddev>
+                            </noise>
+                        </z>
+                    </angular_velocity>
+                    <linear_acceleration>
+                        <x>
+                            <noise type="gaussian">
+                                <mean>0.0</mean>
+                                <stddev>1.7e-2</stddev>
+                            </noise>
+                        </x>
+                        <y>
+                            <noise type="gaussian">
+                                <mean>0.0</mean>
+                                <stddev>1.7e-2</stddev>
+                            </noise>
+                        </y>
+                        <z>
+                            <noise type="gaussian">
+                                <mean>0.0</mean>
+                                <stddev>1.7e-2</stddev>
+                            </noise>
+                        </z>
+                    </linear_acceleration>
+                </imu>
+            </sensor>
+        </gazebo>
+    </xacro:macro>
+
+    <!-- IMU URDF -->
+    <xacro:imu_sensor_urdf parent="base_link"
+        x="-0.203060931806989" y="-0.1330136198556" z="0.00262"
+        rpy="0 0 -1.5707963267949" />
+    <!-- IMU Gazebo -->
+    <!-- Uncomment below if you want to use Gazebo -->
+    <!-- <xacro:imu_sensor_gazebo /> -->
+
+</robot>

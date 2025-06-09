@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<robot name="mecanum" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <xacro:include filename="$(find mecanum_description)/urdf/robot_core.xacro" />
+
+    <xacro:include filename="$(find mecanum_description)/urdf/lidar.xacro" />
+
+    <xacro:include filename="$(find mecanum_description)/urdf/imu.xacro" />
+
+    <xacro:include filename="$(find mecanum_description)/urdf/kinect.xacro" />
+</robot>

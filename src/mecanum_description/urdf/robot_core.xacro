@@ -1,0 +1,112 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- Robot base properties -->
+  <xacro:property name="wheel_separation_width" value="0.402" />
+  <xacro:property name="wheel_separation_length" value="0.363" />
+  <xacro:property name="wheel_height" value="-0.0285" />
+  <xacro:property name="wheel_radius" value="0.075" />
+  <xacro:property name="wheel_width" value="0.037" />
+
+  <!-- Material definitions -->
+  <xacro:macro name="material_chassis">
+    <material name="chassis_material">
+      <color rgba="0.95 0.95 0.95 1" />
+    </material>
+  </xacro:macro>
+
+  <xacro:macro name="material_wheel">
+    <material name="wheel_material">
+      <color rgba="0.2 0.2 0.2 1" />
+    </material>
+  </xacro:macro>
+
+
+  <!-- base link definition -->
+  <link name="base_link">
+  </link>
+  <!-- chassis link definition -->
+
+  <link name="chassis_link">
+    <inertial>
+      <origin xyz="0.0099205 -0.00027461 -0.012024" rpy="0 0 0" />
+      <mass value="1.1181" />
+      <inertia
+        ixx="0.00254" ixy="-1.1679E-08" ixz="8.617E-07"
+        iyy="0.0054872" iyz="7.5586E-08" izz="0.0077966" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="file://$(find mecanum_description)/meshes/chassis_link.STL" />
+      </geometry>
+      <xacro:material_chassis />
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="file://$(find mecanum_description)/meshes/chassis_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="base_chassis_joint" type="fixed">
+    <parent link="base_link" />
+    <child link="chassis_link" />
+  </joint>
+
+  <!-- Wheel macro -->
+  <xacro:macro name="wheel" params="prefix parent x y z rpy axis_xyz">
+    <link name="${prefix}_wheel_link">
+      <inertial>
+        <origin xyz="-4.136E-10 1.1142E-10 -0.018573" rpy="0 0 0" />
+        <mass value="0.22689" />
+        <inertia
+          ixx="6.1082E-05" ixy="-7.4147E-16" ixz="3.0289E-13"
+          iyy="6.1082E-05" iyz="1.2454E-12" izz="8.2539E-05" />
+      </inertial>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <mesh filename="file://$(find mecanum_description)//meshes/${prefix}_wheel_link.STL" />
+        </geometry>
+        <xacro:material_wheel />
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <mesh filename="file://$(find mecanum_description)/meshes/${prefix}_wheel_link.STL" />
+        </geometry>
+      </collision>
+    </link>
+
+    <joint name="chassis_${prefix}_wheel_joint" type="continuous">
+      <origin xyz="${x} ${y} ${z}" rpy="${rpy}" />
+      <parent link="${parent}" />
+      <child link="${prefix}_wheel_link" />
+      <axis xyz="${axis_xyz}" />
+    </joint>
+  </xacro:macro>
+
+  <!-- Instantiate all four wheels -->
+  <xacro:macro name="robot_wheels" params="parent">
+    <xacro:wheel prefix="fr" parent="${parent}"
+      x="0.18096" y="-0.20094" z="${wheel_height}"
+      rpy="1.5708 0 0" axis_xyz="0 0 1" />
+
+    <xacro:wheel prefix="fl" parent="${parent}"
+      x="0.18096" y="0.20096" z="${wheel_height}"
+      rpy="-1.5708 0 0" axis_xyz="0 0 -1" />
+
+    <xacro:wheel prefix="rr" parent="${parent}"
+      x="-0.182038628611086" y="-0.200941316659697" z="${wheel_height}"
+      rpy="1.5707963267949 0 0" axis_xyz="0 0 -1" />
+
+    <xacro:wheel prefix="rl" parent="${parent}"
+      x="-0.182038628611087" y="0.200958683340303" z="${wheel_height}"
+      rpy="-1.5707963267949 0 0" axis_xyz="0 0 1" />
+  </xacro:macro>
+
+  <xacro:robot_wheels parent="chassis_link" />
+
+</robot>
