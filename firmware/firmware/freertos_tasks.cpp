@@ -7,7 +7,7 @@ void ros_spin_task(void *pvParameters)
     while (1)
     {
         rclc_executor_spin_some(&executor, RCL_MS_TO_NS(10));
-        vTaskDelay(pdMS_TO_TICKS(5)); // 200Hz
+        vTaskDelay(pdMS_TO_TICKS(1)); // 1000Hz
     }
 }
 
@@ -16,7 +16,7 @@ void motor_control_task(void *pvParameters)
     while (1)
     {
         update_motor_outputs();        // Apply latest PWM
-        vTaskDelay(pdMS_TO_TICKS(10)); // 100Hz
+        vTaskDelay(pdMS_TO_TICKS(2)); // 500Hz
     }
 }
 

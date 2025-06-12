@@ -7,12 +7,12 @@
 #include <rclc/rclc.h>
 #include <rclc/executor.h>
 #include <std_msgs/msg/int16_multi_array.h>
-#include <sensor_msgs/msg/joint_state.h>
+#include <std_msgs/msg/int32_multi_array.h>
 #include <rosidl_runtime_c/string_functions.h>
 
 // ROS objects
-extern rcl_publisher_t joint_pub;
-extern sensor_msgs__msg__JointState joint_msg;
+extern rcl_publisher_t encoder_pub;
+extern std_msgs__msg__Int32MultiArray encoder_msg;
 extern rcl_subscription_t pwm_sub;
 extern std_msgs__msg__Int16MultiArray pwm_msg;
 extern rclc_executor_t executor;
