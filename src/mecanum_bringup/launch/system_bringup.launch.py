@@ -2,12 +2,19 @@ from launch import LaunchDescription
 from launch.actions import IncludeLaunchDescription
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 from launch_ros.substitutions import FindPackageShare
-from launch_ros.actions import Node
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 
 
 def generate_launch_description():
-    frame_id = LaunchConfiguration('frame_id', default='lidar_scan')
+    lidar_frame_id = LaunchConfiguration(
+        'lidar_frame_id', default='lidar_link')
+    micro_port = LaunchConfiguration('micro_port', default='/dev/ttyUSB0')
+    lidar_port = LaunchConfiguration('lidar_port', default='/dev/ttyUSB1')
+    kinect_depth_frame_id = LaunchConfiguration(
+        'depth_frame_id', default='kinect_depth_optical_link')
+    kinect_rgb_frame_id = LaunchConfiguration(
+        'rgb_frame_id', default='kinect_rgb_optical_link')
+
     return LaunchDescription([
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(
@@ -18,20 +25,35 @@ def generate_launch_description():
                 ])
             ),
             launch_arguments={
-                'frame_id': frame_id
+                'frame_id': lidar_frame_id,
+                'lidar_port': lidar_port
             }.items()
         ),
 
-        Node(
-            package="kinect_ros2",
-            executable="kinect_ros2_node",
-            name="kinect_ros2",
-            namespace="kinect",
+        IncludeLaunchDescription(
+            PythonLaunchDescriptionSource(
+                PathJoinSubstitution([
+                    FindPackageShare('mecanum_bringup'),
+                    'launch',
+                    'kinect_bringup.launch.py'
+                ])
+            ),
+            launch_arguments={
+                'depth_frame_id': kinect_depth_frame_id,
+                'rgb_frame_id': kinect_rgb_frame_id
+            }.items()
         ),
-        Node(
-            package='micro_ros_agent',
-            executable='micro_ros_agent',
-            name='micro_ros_agent',
-            arguments=["serial", "--dev", "/dev/ttuUSB1"]
+
+        IncludeLaunchDescription(
+            PythonLaunchDescriptionSource(
+                PathJoinSubstitution([
+                    FindPackageShare('mecanum_bringup'),
+                    'launch',
+                    'micro_controller_bringup.launch.py'
+                ])
+            ),
+            launch_arguments={
+                'micro_port': micro_port
+            }.items()
         )
     ])
