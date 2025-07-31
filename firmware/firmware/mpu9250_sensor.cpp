@@ -28,8 +28,8 @@ bool setup_mpu9250(void)
     
     // Optional: Run calibration
     Serial.println("Starting calibration in 3 seconds...");
-    delay(3000);
-    calibrate_mpu9250();
+    // delay(3000);
+    // calibrate_mpu9250();
     
     mpu9250_ready = true;
     return true;
