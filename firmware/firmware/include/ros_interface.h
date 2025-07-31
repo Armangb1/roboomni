@@ -8,8 +8,7 @@
 #include <rclc/executor.h>
 #include <std_msgs/msg/int16_multi_array.h>
 #include <std_msgs/msg/int32_multi_array.h>
-#include <sensor_msgs/msg/imu.h>
-#include <sensor_msgs/msg/magnetic_field.h>
+#include <std_msgs/msg/float32_multi_array.h>
 #include <rosidl_runtime_c/string_functions.h>
 
 // Core ROS objects
@@ -28,14 +27,13 @@ extern std_msgs__msg__Int32MultiArray encoder_msg;
 extern rcl_subscription_t pwm_sub;
 extern std_msgs__msg__Int16MultiArray pwm_msg;
 
-// ROS objects for IMU
+// ROS objects for IMU data (using MultiArray instead of sensor_msgs)
 extern rcl_publisher_t imu_pub;
-extern sensor_msgs__msg__Imu imu_msg;
+extern std_msgs__msg__Float32MultiArray imu_msg;
+
+// ROS objects for magnetometer data (using MultiArray instead of sensor_msgs)
 extern rcl_publisher_t mag_pub;
-extern sensor_msgs__msg__MagneticField mag_msg;
-
-extern rmw_qos_profile_t custom_qos;
-
+extern std_msgs__msg__Float32MultiArray mag_msg;
 
 // Function declarations
 void setup_ros(void);

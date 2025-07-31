@@ -12,12 +12,13 @@ rcl_subscription_t pwm_sub;
 std_msgs__msg__Int16MultiArray pwm_msg;
 
 
-// ROS objects for IMU
+// ROS objects for IMU data (using MultiArray instead of sensor_msgs)
 rcl_publisher_t imu_pub;
-sensor_msgs__msg__Imu imu_msg;
-rcl_publisher_t mag_pub;
-sensor_msgs__msg__MagneticField mag_msg;
+std_msgs__msg__Float32MultiArray imu_msg;
 
+// ROS objects for magnetometer data (using MultiArray instead of sensor_msgs)
+rcl_publisher_t mag_pub;
+std_msgs__msg__Float32MultiArray mag_msg;
 
 // Core ROS objects
 rclc_executor_t executor;
@@ -57,68 +58,44 @@ void publish_imu_cb(rcl_timer_t *timer, int64_t last_call_time)
     (void)timer;
     (void)last_call_time;
 
-
-    // Read sensor data
+    // IMU data array structure:
+    // [0-2]: Linear acceleration (x, y, z) in m/s²
+    // [3-5]: Angular velocity (x, y, z) in rad/s
+    // [6]: Timestamp seconds
+    // [7]: Timestamp nanoseconds
+    
     // Get current time
     int64_t time_ns = rmw_uros_epoch_nanos();
     
-    // Populate IMU message
-    imu_msg.header.stamp.sec = time_ns / 1000000000;
-    imu_msg.header.stamp.nanosec = time_ns % 1000000000;
-    
-    // Linear acceleration (already in m/s²)
-    imu_msg.linear_acceleration.x = mpu9250_data.accel_x;
-    imu_msg.linear_acceleration.y = mpu9250_data.accel_y;
-    imu_msg.linear_acceleration.z = mpu9250_data.accel_z;
-    
-    // Angular velocity (already in rad/s)
-    imu_msg.angular_velocity.x = mpu9250_data.gyro_x;
-    imu_msg.angular_velocity.y = mpu9250_data.gyro_y;
-    imu_msg.angular_velocity.z = mpu9250_data.gyro_z;
-    
-    // Orientation (not computed, set to zero with high covariance)
-    // imu_msg.orientation.x = 0.0;
-    // imu_msg.orientation.y = 0.0;
-    // imu_msg.orientation.z = 0.0;
-    // imu_msg.orientation.w = 1.0;
-    
-    // Covariance matrices (set to -1 for unknown, or provide estimates)
-    // for (int i = 0; i < 9; i++) {
-    //     imu_msg.orientation_covariance[i] = -1.0;          // Unknown orientation
-    //     imu_msg.angular_velocity_covariance[i] = (i % 4 == 0) ? 0.001 : 0.0;  // Diagonal
-    //     imu_msg.linear_acceleration_covariance[i] = (i % 4 == 0) ? 0.001 : 0.0;  // Diagonal
-    // }
+    // Populate IMU message array
+    imu_msg.data.data[0] = mpu9250_data.accel_x;  // Linear acceleration X
+    imu_msg.data.data[1] = mpu9250_data.accel_y;  // Linear acceleration Y
+    imu_msg.data.data[2] = mpu9250_data.accel_z;  // Linear acceleration Z
+    imu_msg.data.data[3] = mpu9250_data.gyro_x;   // Angular velocity X
+    imu_msg.data.data[4] = mpu9250_data.gyro_y;   // Angular velocity Y
+    imu_msg.data.data[5] = mpu9250_data.gyro_z;   // Angular velocity Z
+    imu_msg.data.data[6] = (float)(time_ns / 1000000000);  // Timestamp seconds
+    imu_msg.data.data[7] = (float)(time_ns % 1000000000);  // Timestamp nanoseconds
     
     // Publish IMU data
     rcl_publish(&imu_pub, &imu_msg, NULL);
     
-    // Populate magnetic field message
-    mag_msg.header.stamp.sec = time_ns / 1000000000;
-    mag_msg.header.stamp.nanosec = time_ns % 1000000000;
-    // mag_msg.header.frame_id.data = "imu_link";
-    // mag_msg.header.frame_id.size = strlen("imu_link");
+    // Magnetometer data array structure:
+    // [0-2]: Magnetic field (x, y, z) in Tesla
+    // [3]: Timestamp seconds
+    // [4]: Timestamp nanoseconds
     
-    // Magnetic field (Tesla) - convert μT to T
-    mag_msg.magnetic_field.x = mpu9250_data.mag_x * 1e-6;
-    mag_msg.magnetic_field.y = mpu9250_data.mag_y * 1e-6;
-    mag_msg.magnetic_field.z = mpu9250_data.mag_z * 1e-6;
-    
-    // Magnetic field covariance
-    // for (int i = 0; i < 9; i++) {
-    //     mag_msg.magnetic_field_covariance[i] = (i % 4 == 0) ? 1e-12 : 0.0;  // Diagonal in T²
-    // }
+    // Populate magnetic field message array
+    mag_msg.data.data[0] = mpu9250_data.mag_x * 1e-6;  // Convert μT to T
+    mag_msg.data.data[1] = mpu9250_data.mag_y * 1e-6;  // Convert μT to T
+    mag_msg.data.data[2] = mpu9250_data.mag_z * 1e-6;  // Convert μT to T
+    mag_msg.data.data[3] = (float)(time_ns / 1000000000);  // Timestamp seconds
+    mag_msg.data.data[4] = (float)(time_ns % 1000000000);  // Timestamp nanoseconds
     
     // Publish magnetic field data
     rcl_publish(&mag_pub, &mag_msg, NULL);
 }
 
-void test_cb(rcl_timer_t *timer, int64_t last_call_time)
-{
-    (void)timer;
-    (void)last_call_time;
-
-    // do nothing
-}
 
 void setup_ros()
 {
@@ -127,19 +104,15 @@ void setup_ros()
     allocator = rcl_get_default_allocator();
     rclc_support_init(&support, 0, NULL, &allocator);
     rclc_node_init_default(&node, "esp32_node", "", &support);
-
-    // Custom QoS profile for IMU and magnetic field data
-    // This profile uses best-effort reliability for lower latency
-    // and keeps the last 5 messages in history.
-    // It is suitable for high-frequency data like IMU and magnetic field.
-    custom_qos = rmw_qos_profile_default;
-    custom_qos.reliability = RMW_QOS_POLICY_RELIABILITY_BEST_EFFORT; // Change to best-effort for lower latency
-    custom_qos.history = RMW_QOS_POLICY_HISTORY_KEEP_LAST;
-    custom_qos.depth = 5; // Keep last 5 messages
-    // custom_qos.durability = RMW_QOS_POLICY_DURABILITY_VOLATILE;
-
+   
+    // Using predefined sensor data QoS profile
+    // This profile is optimized for sensor data with:
+    // - Best effort reliability for low latency
+    // - Keep last history with depth of 5
+    // - Volatile durability
 
     // Subscriber for PWM commands
+    
     rclc_subscription_init_default(
         &pwm_sub,
         &node,
@@ -152,24 +125,23 @@ void setup_ros()
         &node,
         ROSIDL_GET_MSG_TYPE_SUPPORT(std_msgs, msg, Int32MultiArray),
         "/encoder",
-        &custom_qos);
+        &rmw_qos_profile_sensor_data);
 
-    
-    // Publisher for IMU data
+    // Publisher for IMU data (using Float32MultiArray)
     rclc_publisher_init(
         &imu_pub,
         &node,
-        ROSIDL_GET_MSG_TYPE_SUPPORT(sensor_msgs, msg, Imu),
+        ROSIDL_GET_MSG_TYPE_SUPPORT(std_msgs, msg, Float32MultiArray),
         "/imu/data",
-        &custom_qos);
+        &rmw_qos_profile_sensor_data);
 
-    // Publisher for magnetic field data
+    // Publisher for magnetic field data (using Float32MultiArray)
     rclc_publisher_init(
         &mag_pub,
         &node,
-        ROSIDL_GET_MSG_TYPE_SUPPORT(sensor_msgs, msg, MagneticField),
+        ROSIDL_GET_MSG_TYPE_SUPPORT(std_msgs, msg, Float32MultiArray),
         "/imu/mag",
-        &custom_qos);
+        &rmw_qos_profile_sensor_data);
 
     // Timer for encoder publishing (100Hz)
     rclc_timer_init_default(
@@ -178,15 +150,12 @@ void setup_ros()
         RCL_MS_TO_NS(10),
         publish_encoder_cb);
 
-
-
     // Timer for IMU publishing (100Hz)
     rclc_timer_init_default(
         &imu_timer,
         &support,
         RCL_MS_TO_NS(10),
         publish_imu_cb);
-
 
     // Executor
     rclc_executor_init(&executor, &support.context, 4, &allocator);
@@ -204,46 +173,23 @@ void setup_ros()
     pwm_msg.data.size = NUM_MOTORS;
     pwm_msg.data.capacity = NUM_MOTORS;
 
-    // Initialize IMU message
-    imu_msg.header.frame_id.data = (char *)malloc(10);
-    imu_msg.header.frame_id.capacity = 10;
+    // Initialize IMU message (8 elements: 6 sensor values + 2 timestamp values)
+    imu_msg.data.data = (float *)malloc(8 * sizeof(float));
+    imu_msg.data.size = 8;
+    imu_msg.data.capacity = 8;
     
-    imu_msg.header.frame_id.data = (char *)"imu_link";
-    imu_msg.header.frame_id.size = strlen(imu_msg.header.frame_id.data);
-    imu_msg.linear_acceleration.x = 0.0;
-    imu_msg.linear_acceleration.y = 0.0;
-    imu_msg.linear_acceleration.z = 0.0;
-    imu_msg.angular_velocity.x = 0.0;
-    imu_msg.angular_velocity.y = 0.0;
-    imu_msg.angular_velocity.z = 0.0;
-    imu_msg.orientation.x = 0.0;
-    imu_msg.orientation.y = 0.0;
-    imu_msg.orientation.z = 0.0;
-    imu_msg.orientation.w = 1.0; // Identity quaternion
-    for (int i = 0; i < 9; i++) {
-        imu_msg.orientation_covariance[i] = -1.0; // Unknown orientation
-        imu_msg.angular_velocity_covariance[i] = (i % 4 == 0) ? 0.001 : 0.0; // Diagonal
-        imu_msg.linear_acceleration_covariance[i] = (i % 4 == 0) ? 0.001 : 0.0; // Diagonal
+    // Initialize with zeros
+    for (int i = 0; i < 8; i++) {
+        imu_msg.data.data[i] = 0.0f;
     }
 
-
-    // Initialize magnetic field message
-    mag_msg.header.frame_id.data = (char *)malloc(10);
-    mag_msg.header.frame_id.capacity = 10;
-
-    mag_msg.header.frame_id.data = (char *)"imu_link";
-    mag_msg.header.frame_id.size = strlen(mag_msg.header.frame_id.data);
-
-    mag_msg.magnetic_field.x = 0.0;
-    mag_msg.magnetic_field.y = 0.0;
-    mag_msg.magnetic_field.z = 0.0;
-
-    for (int i = 0; i < 9; i++) {
-        mag_msg.magnetic_field_covariance[i] = (i % 4 == 0) ? 1e-12 : 0.0; // Diagonal in T²
+    // Initialize magnetic field message (5 elements: 3 sensor values + 2 timestamp values)
+    mag_msg.data.data = (float *)malloc(5 * sizeof(float));
+    mag_msg.data.size = 5;
+    mag_msg.data.capacity = 5;
+    
+    // Initialize with zeros
+    for (int i = 0; i < 5; i++) {
+        mag_msg.data.data[i] = 0.0f;
     }
-
-
-
-
-
 }
