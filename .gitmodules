@@ -1,4 +1,0 @@
-[submodule "src/kinect_ros2"]
-	path = src/kinect_ros2
-	url = https://github.com/Armangb1/kinect_ros2.git
-	branch = jazzy
