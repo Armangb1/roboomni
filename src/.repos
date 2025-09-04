@@ -1,4 +1,12 @@
 repositories:
+  firmware/mecanum_microros_firmware:
+    type: git
+    url: https://github.com/Armangb1/mecanum_microros_firmware.git
+    version: main
+  firmware/mecanum_udp_firmware:
+    type: git
+    url: https://github.com/Armangb1/mecanum_udp_firmware.git
+    version: main
   third_party/kinect_ros2:
     type: git
     url: https://github.com/Armangb1/kinect_ros2.git
