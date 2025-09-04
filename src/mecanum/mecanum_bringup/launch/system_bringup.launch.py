@@ -4,7 +4,7 @@ from launch.conditions import IfCondition
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 from launch_ros.substitutions import FindPackageShare
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-
+from launch.substitutions import NotSubstitution
 
 def generate_launch_description():
     # Declare launch arguments for conditional execution
@@ -145,7 +145,8 @@ def generate_launch_description():
                 'view.launch.py'
             ])
         ),
-        condition=IfCondition(use_display)
+        condition=IfCondition(use_display),
+        launch_arguments={'use_js': NotSubstitution(use_control)}.items()
     )
     
     # Placeholder for control launch (you'll need to create this launch file)
