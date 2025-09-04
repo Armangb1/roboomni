@@ -30,3 +30,5 @@ Thumbs.db
 
 # Ignore if you use ROS 1/2 workspaces together (optional)
 devel/
+
+src/third_party/
