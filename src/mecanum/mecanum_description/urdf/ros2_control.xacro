@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+
+    <xacro:macro name="joint_control" params="prefix">
+    <joint name="chassis_${prefix}_wheel_joint">
+        <command_interface name="voltage"></command_interface>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+    </joint>
+  </xacro:macro>
+
+    <ros2_control name="MecanumMicroRos" type="system">
+        <hardware>
+            <plugin>mecanum_hardware_interface/MicroRosInterface</plugin>
+        </hardware>
+        <xacro:joint_control prefix="fl"/>
+        <xacro:joint_control prefix="fr"/>
+        <xacro:joint_control prefix="rl"/>
+        <xacro:joint_control prefix="rr"/>
+        <sensor name="imu_sensor">
+            <!-- <state_interface name="linear_acceleration.x"/>
+            <state_interface name="linear_acceleration.y"/>
+            <state_interface name="linear_acceleration.z"/>
+            <state_interface name="angular_velocity.x"/>
+            <state_interface name="angular_velocity.y"/>
+            <state_interface name="angular_velocity.z"/> -->
+        </sensor>
+        
+        </ros2_control>
+</robot>

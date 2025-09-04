@@ -8,4 +8,7 @@
     <xacro:include filename="$(find mecanum_description)/urdf/imu.xacro" />
 
     <xacro:include filename="$(find mecanum_description)/urdf/kinect.xacro" />
+
+    <xacro:include filename="$(find mecanum_description)/urdf/ros2_control.xacro"/>
+
 </robot>
