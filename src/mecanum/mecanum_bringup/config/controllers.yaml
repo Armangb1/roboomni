@@ -1,0 +1,17 @@
+controller_manager:
+  ros__parameters:
+    update_rate: 70  # Hz
+
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+
+forward_voltage_controller:
+  ros__parameters:
+    type: forward_command_controller/ForwardCommandController
+    joints:
+      - chassis_fl_wheel_joint
+      - chassis_fr_wheel_joint
+      - chassis_rl_wheel_joint
+      - chassis_rr_wheel_joint
+    interface_name: voltage
+
