@@ -1,4 +1,8 @@
 repositories:
+  control/mecanum_hardware_interface:
+    type: git
+    url: https://github.com/Armangb1/mecanum_hardware_interface.git
+    version: main
   firmware/mecanum_microros_firmware:
     type: git
     url: https://github.com/Armangb1/mecanum_microros_firmware.git
