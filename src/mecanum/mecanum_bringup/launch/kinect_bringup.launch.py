@@ -21,6 +21,7 @@ def generate_launch_description():
             executable='kinect_ros2_node',
             name='kinect',
             output='screen',
+            namespace='kinect',
             parameters=[{
                 'rgb_frame_id': LaunchConfiguration('rgb_frame_id'),
                 'depth_frame_id': LaunchConfiguration('depth_frame_id')
