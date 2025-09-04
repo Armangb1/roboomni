@@ -94,7 +94,7 @@
     <!-- LiDAR URDF -->
     <xacro:lidar_sensor_urdf parent="chassis_link"
         x="0.094461" y="0" z="0.13058"
-        rpy="0 0 0" />
+        rpy="0 0 3.1415" />
 
     <!-- LiDAR Gazebo -->
     <!-- uncomment below if you want to use gazebo -->
