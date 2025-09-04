@@ -1,39 +1,38 @@
+# Setup Instructions
 
-## Setup Instructions
+## Environment Setup
 
-1. **Create a workspace and clone the project**
+### 1. Clone the Project
 
-    ```bash
-    mkdir mecanum_ws
-    cd mecanum_ws
-    git clone --recursive https://github.com/Armangb1/roboomni.git .
-    ```
+```bash
+git clone -b jazzy https://github.com/Armangb1/roboomni.git
+```
 
-2. **Clone the micro-ROS repository**
+### 2. Download Repositories
 
-    ```bash
-    git clone -b ${ROS_DISTRO} https://github.com/micro-ROS/micro_ros_setup.git src/micro_ros_setup
-    ```
+```bash
+cd roboomni/src
+vcs import < .repos
+```
 
-3. **Install package dependencies using rosdep**
+### 3. Build the Workspace
 
-    ```bash
-    rosdep update
-    rosdep install --from-paths src --ignore-src -y
-    ```
+```bash
+cd ..
+colcon build
+```
 
-4. **Build packages and create the agent workspace**
+### 4. (Optional) Micro-ROS Setup
 
-    ```bash
-    colcon build
-    ros2 run micro_ros_setup create_agent_ws.sh
-    ros2 run micro_ros_setup build_agent.sh
-    ```
+If you want to use Micro-ROS:
 
-5. **Source and launch the system**
+```bash
+source install/setup.bash
+```
 
-    ```bash
-    source install/setup.bash
-    ros2 launch mecanum_bringup system_bringup.launch.py
-    ```
+#### Build Micro-ROS Agent
 
+```bash
+ros2 run micro_ros_setup create_agent_ws.sh src/third_party
+colcon build
+```
