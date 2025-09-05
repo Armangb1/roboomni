@@ -13,7 +13,6 @@
   <exec_depend>launch_ros</exec_depend>
   <exec_depend>sllidar_ros</exec_depend>
   <exec_depend>kinect_ros2</exec_depend>
-  <exec_depend>micro_ros_agent</exec_depend>
   <exec_depend>mecanum_description</exec_depend>
   <exec_depsend>controller_manager</exec_depend>
   <exec_depend>joint_state_broadcaster</exec_depend>
