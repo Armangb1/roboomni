@@ -19,6 +19,8 @@ vcs import < .repos
 
 ```bash
 cd ..
+rosdep update
+rosdep install -i --from-paths src/ -y
 colcon build
 ```
 
