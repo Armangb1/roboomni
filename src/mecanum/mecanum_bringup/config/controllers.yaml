@@ -15,3 +15,20 @@ forward_voltage_controller:
       - chassis_rr_wheel_joint
     interface_name: voltage
 
+jacobian:
+  ros__parameters:
+    type: mecanum_jacobian/JacobianController
+    joints:
+      - chassis_fr_wheel_joint
+      - chassis_fl_wheel_joint
+      - chassis_rl_wheel_joint
+      - chassis_rr_wheel_joint
+
+inverse_jacobian:
+  ros__parameters:
+    type: mecanum_jacobian/InverseJacobianController
+    joints:
+      - chassis_fr_wheel_joint
+      - chassis_fl_wheel_joint
+      - chassis_rl_wheel_joint
+      - chassis_rr_wheel_joint

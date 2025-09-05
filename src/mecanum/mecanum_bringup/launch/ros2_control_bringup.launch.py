@@ -30,10 +30,25 @@ def generate_launch_description():
         executable="spawner",
         arguments=["joint_state_broadcaster", "--param-file", config_file],
     )
+
+    jacobian = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["jacobian", "--param-file", config_file],
+    )
+
+    inverse_jacobian = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["inverse_jacobian", "--param-file", config_file],
+    )
+
     return LaunchDescription(
         [
             controller_manager,
-            forward_command_controller,
-            joint_state_broadcaster
+            # forward_command_controller,
+            joint_state_broadcaster,
+            jacobian,
+            inverse_jacobian  
         ]
     )
