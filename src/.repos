@@ -1,4 +1,8 @@
 repositories:
+  control/controller/mecanum_jacobian:
+    type: git
+    url: https://github.com/Armangb1/mecanum_jacobian_controller.git
+    version: main
   control/mecanum_hardware_interface:
     type: git
     url: https://github.com/Armangb1/mecanum_hardware_interface.git
