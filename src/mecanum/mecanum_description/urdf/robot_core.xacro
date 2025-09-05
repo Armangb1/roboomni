@@ -103,8 +103,8 @@
       rpy="1.5707963267949 0 0" axis_xyz="0 0 -1" />
 
     <xacro:wheel prefix="rl" parent="${parent}"
-      x="-0.182038628611087" y="0.200958683340303" z="${wheel_height}"
-      rpy="-1.5707963267949 0 0" axis_xyz="0 0 1" />
+      x="-0.182038628611087" y="0.155958683340303" z="${wheel_height}"
+      rpy="1.5707963267949 0 0" axis_xyz="0 0 1" />
   </xacro:macro>
 
   <xacro:robot_wheels parent="chassis_link" />

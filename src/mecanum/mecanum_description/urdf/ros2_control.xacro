@@ -14,8 +14,8 @@
         <hardware>
             <plugin>mecanum_hardware_interface/MicroRosInterface</plugin>
         </hardware>
-        <xacro:joint_control prefix="fl"/>
         <xacro:joint_control prefix="fr"/>
+        <xacro:joint_control prefix="fl"/>
         <xacro:joint_control prefix="rl"/>
         <xacro:joint_control prefix="rr"/>
         <sensor name="imu_sensor">
