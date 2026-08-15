@@ -1,21 +1,21 @@
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
-from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
-from launch_ros.substitutions import FindPackageShare
-from launch.substitutions import Command
-from launch_ros.parameter_descriptions import ParameterValue
+from launch.substitutions import Command, LaunchConfiguration, PathJoinSubstitution
 from launch_ros.actions import Node
+from launch_ros.parameter_descriptions import ParameterValue
+from launch_ros.substitutions import FindPackageShare
+
 
 def generate_launch_description():
-    
+
     urdf_file_arg = DeclareLaunchArgument(
         'robot_description_file',
         default_value=PathJoinSubstitution([
             FindPackageShare('mecanum_description'),
             'urdf',
-            'robot.urdf.xacro'
+            'robot.urdf.xacro',
         ]),
-        description='Path to the robot description file'
+        description='Path to the robot description file',
     )
 
     urdf_path = LaunchConfiguration('robot_description_file')
@@ -32,13 +32,14 @@ def generate_launch_description():
         parameters=[{
             'robot_description': ParameterValue(
                 robot_description,
-                value_type=str
-            )
-        }]
+                value_type=str,
+            ),
+        }],
     )
+
     return LaunchDescription(
         [
             urdf_file_arg,
-            robot_state_publisher
+            robot_state_publisher,
         ]
     )
