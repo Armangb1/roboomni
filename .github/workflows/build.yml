@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-24.04
+    env:
+      ROS_DISTRO: jazzy
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup ROS 2 Jazzy
+        uses: ros-tooling/setup-ros@v0.7
+        with:
+          required-ros-distributions: jazzy
+
+      - name: Install dependencies
+        # mecanum_description has no external deps; this also pulls in the
+        # ament linters needed by colcon test. (mecanum_bringup depends on
+        # packages only available via src/.repos, so we skip rosdep there.)
+        run: |
+          rosdep update
+          rosdep install --from-paths src/mecanum/mecanum_description --ignore-src -r -y
+
+      - name: Build packages
+        run: |
+          colcon build --packages-select mecanum_description mecanum_bringup
+
+      - name: Lint and test
+        run: |
+          colcon test --packages-select mecanum_description mecanum_bringup
+
+      - name: Publish test results
+        if: always()
+        run: |
+          colcon test-result --verbose
