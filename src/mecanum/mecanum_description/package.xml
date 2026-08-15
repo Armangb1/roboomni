@@ -3,9 +3,9 @@
 <package format="3">
   <name>mecanum_description</name>
   <version>0.0.0</version>
-  <description>TODO: Package description</description>
+  <description>URDF/Xacro robot model, meshes, and visualization launch files for the RoboOmni mecanum robot.</description>
   <maintainer email="arman.ghbn@gmail.com">armangb1</maintainer>
-  <license>MIT</license>
+  <license>Apache-2.0</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
   

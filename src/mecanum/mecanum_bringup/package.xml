@@ -3,9 +3,9 @@
 <package format="3">
   <name>mecanum_bringup</name>
   <version>0.0.0</version>
-  <description>TODO: Package description</description>
+  <description>Launch files and configuration for bringing up the RoboOmni mecanum robot: sensors (Kinect, RPLIDAR), micro-ROS agent, and the ros2_control system.</description>
   <maintainer email="arman.ghbn@gmail.com">armangb1</maintainer>
-  <license>MIT</license>
+  <license>Apache-2.0</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
