@@ -1,4 +1,4 @@
-FROM ros:humble
+FROM ros:jazzy
 
 # Set environment variables
 ENV DEBIAN_FRONTEND=noninteractive \
