@@ -8,7 +8,19 @@ A ROS 2 (Jazzy) mobile robotics platform built on a **mecanum-wheeled** chassis 
 
 ## Demo
 
-> Photos, videos, and dataset samples will live in [`docs/media/`](docs/media/). *To be added.*
+### Robot
+
+![Real robot](docs/media/robot_real.jpg)
+
+### Visualization
+
+![RViz](docs/media/robot_rviz.png)
+
+### Sensor outputs
+
+| LiDAR | Kinect | Kinect + LiDAR |
+|---|---|---|
+| ![LiDAR output](docs/media/lidar_output.png) | ![Kinect output](docs/media/kinect_output.png) | ![Kinect + LiDAR output](docs/media/kinect_lidar_output.png) |
 
 ## Features
 
